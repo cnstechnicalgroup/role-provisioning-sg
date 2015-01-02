@@ -44,8 +44,15 @@ Examples
 
 ```yaml
 ---
-- name: common role test
-  hosts: all
+- name: cns.provision-site-sg example
+  hosts: localhost
   roles:
-    - cns.provision-site-sg
+    - { role: cns.provision-site-sg,
+        vpc: vpc,
+        mode: 'dev',
+        mgmt_subnet_name: 'management-subnet-001',
+        prefix: 'theworldcom',
+        domain: 'the-world.com',
+        subdomain: 'dev',
+        ssl_certificate_id: 'arn:aws:iam::012345678901:server-certificate/scert' }
 ```
