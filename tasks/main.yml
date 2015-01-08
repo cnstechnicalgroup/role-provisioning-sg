@@ -105,31 +105,6 @@
         to_port: 443
         cidr_ip: "{{ web_cidr }}"
 
-- name: DB Hosts SG 
-  local_action:
-    module: ec2_group
-    name: "{{ prefix }}-{{ mode }}-db-001"
-    description: DB Hosts SG
-    vpc_id: "{{ vpc.vpc_id }}"
-    region: eu-west-1
-    rules:
-      - proto: tcp
-        from_port: 22
-        to_port: 22
-        cidr_ip: "{{ mgmt_cidr }}"
-      - proto: tcp
-        from_port: 3306
-        to_port: 3306
-        cidr_ip: "{{ mgmt_cidr }}"
-      - proto: tcp
-        from_port: 3306
-        to_port: 3306
-        cidr_ip: "{{ app_cidr }}"
-      - proto: tcp
-        from_port: 3306
-        to_port: 3306
-        cidr_ip: "{{ web_cidr }}"
-
 # Grab the subnet_id for the Web SG
 # in order to build out the ELB
 - name: Get subnet id for ELB creation
@@ -190,31 +165,6 @@
 #  register: rec
 
 #- debug: var=rec
-
-# Grab the subnet_id for the RDS subnets
-# in order to build out the DB Subnet Group
-- name: Get RDS - A subnet id for RDS Subnet Group creation
-  set_fact:
-    rds_subnet_id_a: "{{ item.id }}"
-  with_items: vpc.subnets
-  when: item.resource_tags['Name'] is defined and item.resource_tags['Name'] == "{{ prefix }}_rdsa_{{ mode }}"
-
-- name: Get RDS - B subnet id for DB Subnet Group creation
-  set_fact:
-    rds_subnet_id_b: "{{ item.id }}"
-  with_items: vpc.subnets
-  when: item.resource_tags['Name'] is defined and item.resource_tags['Name'] == "{{ prefix }}_rdsb_{{ mode }}"
-
-- name: Create DB Subnet Group
-  local_action:
-    module: rds_subnet_group
-    state: present
-    region: "{{ region }}"
-    name: "mysql-{{ prefix }}-{{ mode }}-dbsng-001"
-    description: DB Subnet Group
-    subnets:
-      - "{{ rds_subnet_id_a }}"
-      - "{{ rds_subnet_id_b }}"
 
 - name: Create S3 bucket
   s3: bucket="{{ prefix }}-{{ mode }}" mode=create
