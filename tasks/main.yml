@@ -48,7 +48,7 @@
 - name: ELB SG 
   local_action:
     module: ec2_group
-    name: "{{ prefix }}-{{ 'development' if mode == 'dev' else 'production' }}-elb-001"
+    name: "{{ prefix }}-{{ mode }}-elb-001"
     description: ELB SG
     vpc_id: "{{ vpc.vpc_id }}"
     region: eu-west-1
@@ -66,7 +66,7 @@
 - name: Web Hosts SG 
   local_action:
     module: ec2_group
-    name: "{{ prefix }}-{{ 'development' if mode == 'dev' else 'production' }}-web-001"
+    name: "{{ prefix }}-{{ mode }}-web-001"
     description: Web Hosts SG
     vpc_id: "{{ vpc.vpc_id }}"
     region: eu-west-1
@@ -87,7 +87,7 @@
 - name: App Hosts SG 
   local_action:
     module: ec2_group
-    name: "{{ prefix }}-{{ 'development' if mode == 'dev' else 'production' }}-app-001"
+    name: "{{ prefix }}-{{ mode }}-app-001"
     description: App Hosts SG
     vpc_id: "{{ vpc.vpc_id }}"
     region: eu-west-1
@@ -108,7 +108,7 @@
 - name: DB Hosts SG 
   local_action:
     module: ec2_group
-    name: "{{ prefix }}-{{ 'development' if mode == 'dev' else 'production' }}-db-001"
+    name: "{{ prefix }}-{{ mode }}-db-001"
     description: DB Hosts SG
     vpc_id: "{{ vpc.vpc_id }}"
     region: eu-west-1
