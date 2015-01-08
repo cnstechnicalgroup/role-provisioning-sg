@@ -137,7 +137,7 @@
         #instance_protocol: https
         #ssl_certificate_id: ""
     health_check:
-      ping_protocol: https
+      ping_protocol: http
       ping_port: 443
       ping_path: "/ping"
       response_timeout: 5
