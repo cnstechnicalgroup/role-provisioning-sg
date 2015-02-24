@@ -1,6 +1,22 @@
 # Create VPC and subnets and optional availability zones.
 # The absence or presense of subnets deletes or creates them respectively.
 ---
+- name: Normalize variables
+  set_fact:
+    prefix: "{{ item.value.prefix }}"
+    role: "{{ item.value.role }}"
+    mode: "{{ item.value.mode }}"
+    keypair: "{{ item.value.keypair }}"
+    ami_image: "{{ item.value.ami_image }}"
+    instance_type: "{{ item.value.instance_type }}"
+    region: "{{ item.value.region }}"
+    assign_public_ip: "{{ item.value.assign_public_ip }}"
+    security_group: "{{ item.value.prefix }}-{{ item.value.mode }}-{{ item.value.role }}-001"
+    count: "{{ item.value.count }}"
+    use_elb: "{{ item.value.use_elb }}"
+    elastic_ip: "{{ item.value.elastic_ip }}"
+  with_dict: instance
+
 # Gather cidr addresses for each SG
 - name: Get management subnet address
   set_fact:
@@ -145,8 +161,10 @@
       unhealthy_threshold: 2
       healthy_threshold: 2
   register: elb
+  when: use_elb
 
 - debug: var=elb.elb.dns_name
+  when: use_elb
 
 #- route53: >
 #      command=create
