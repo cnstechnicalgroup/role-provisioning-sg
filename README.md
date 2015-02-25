@@ -16,12 +16,8 @@ In the current version, you can specify the following variables:
 | Name                  | Default |                                                                               |
 |-----------------------|---------|-------------------------------------------------------------------------------|
 | vpc                   |   ---   | Object containint entire VPC structure. Passed from management_vpc playbook.  |
-| mode                  |   ---   | Target build environment (dev, test, stage, prod.                             |
 | mgmt_subnet_name      |   ---   | Name of the management subnet for the target VPC.                             |
-| prefix                |   ---   | Short name for site. e.g. the-world.com becomes theworldcom.                  |
-| domain                |   ---   | Primary site domain name. e.g. the-world.com.                                 |
-| subdomain             |   ---   | Special environment subdomains for dev, test, and stage.                      |
-| ssl_certificate_id    |   ---   | AWS IAM SSL Certificate ID.                                                   |
+| instance              |   ---   | Object containing instance details (see example).                             |
 
 Dependencies
 ------------
@@ -47,12 +43,5 @@ Examples
 - name: cns.provision-site-sg example
   hosts: localhost
   roles:
-    - { role: cns.provision-site-sg,
-        vpc: vpc,
-        mode: 'dev',
-        mgmt_subnet_name: 'management-subnet-001',
-        prefix: 'theworldcom',
-        domain: 'the-world.com',
-        subdomain: 'dev',
-        ssl_certificate_id: 'arn:aws:iam::012345678901:server-certificate/scert' }
+    - { role: cns.provisioning-sg, instance: "{{ instance_ec2 }}" }
 ```
