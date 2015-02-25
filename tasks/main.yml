@@ -3,9 +3,12 @@
 ---
 - name: Normalize variables
   set_fact:
-    prefix: "{{ item.value.prefix }}"
     role: "{{ item.value.role }}"
     mode: "{{ item.value.mode }}"
+    prefix: "{{ item.value.prefix }}"
+    name: "{{ item.value.name }}"
+    domain: "{{ item.value.domain }}"
+    subdomain: "{{ item.value.subdomain }}"
     keypair: "{{ item.value.keypair }}"
     ami_image: "{{ item.value.ami_image }}"
     instance_type: "{{ item.value.instance_type }}"
