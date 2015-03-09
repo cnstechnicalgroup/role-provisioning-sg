@@ -14,9 +14,10 @@
     instance_type: "{{ item.value.instance_type }}"
     region: "{{ item.value.region }}"
     assign_public_ip: "{{ item.value.assign_public_ip }}"
-    security_group: "{{ item.value.prefix }}-{{ item.value.mode }}-{{ item.value.role }}-001"
+    security_group: "{{ item.value.prefix }}-{{ item.value.mode }}-{{ item.value.role }}"
     count: "{{ item.value.count }}"
     use_elb: "{{ item.value.use_elb }}"
+    ssl_arn: "{{ item.value.ssl_arn }}"
     elastic_ip: "{{ item.value.elastic_ip }}"
   with_dict: instance
 
@@ -67,7 +68,7 @@
 - name: ELB SG 
   local_action:
     module: ec2_group
-    name: "{{ prefix }}-{{ mode }}-elb-001"
+    name: "{{ prefix }}-{{ mode }}-elb"
     description: ELB SG
     vpc_id: "{{ vpc.vpc_id }}"
     region: eu-west-1
@@ -85,7 +86,7 @@
 - name: Web Hosts SG 
   local_action:
     module: ec2_group
-    name: "{{ prefix }}-{{ mode }}-web-001"
+    name: "{{ prefix }}-{{ mode }}-web"
     description: Web Hosts SG
     vpc_id: "{{ vpc.vpc_id }}"
     region: eu-west-1
@@ -106,7 +107,7 @@
 - name: App Hosts SG 
   local_action:
     module: ec2_group
-    name: "{{ prefix }}-{{ mode }}-app-001"
+    name: "{{ prefix }}-{{ mode }}-app"
     description: App Hosts SG
     vpc_id: "{{ vpc.vpc_id }}"
     region: eu-west-1
@@ -137,7 +138,7 @@
 
 - local_action:
     module: ec2_elb_lb
-    name: "net-{{ prefix }}-{{ mode }}-elb-001"
+    name: "net-{{ prefix }}-{{ mode }}-elb"
     scheme: internet-facing
     state: present
     region: eu-west-1
@@ -150,11 +151,11 @@
       - protocol: http
         load_balancer_port: 80
         instance_port: 80
-      - protocol: tcp
+      - protocol: https
         load_balancer_port: 443
         instance_port: 443
-        #instance_protocol: https
-        #ssl_certificate_id: ""
+        instance_protocol: http
+        ssl_certificate_id: "{{ ssl_arn }}"
     health_check:
       ping_protocol: http
       ping_port: 443
@@ -190,5 +191,3 @@
 - name: Create S3 bucket
   s3: bucket="{{ prefix }}-{{ mode }}" mode=create
   register: s3bucket
-
-- debug: var=s3bucket
